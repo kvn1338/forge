@@ -1628,7 +1628,7 @@ public class GameAction {
 
     private boolean stateBasedAction_Saga(Card c, CardCollection sacrificeList) {
         boolean checkAgain = false;
-        if (!c.isSaga()) {
+        if (!c.isSaga() || !c.hasChapter()) {
             return false;
         }
         // needs to be effect, because otherwise it might be a cost?
@@ -2790,15 +2790,9 @@ public class GameAction {
             return false;
         }
 
-        SpellAbility aura = new SpellAbility.EmptySa(ApiType.Attach, source);
-        if (source.hasSVar("AttachAITgts")) {
-            aura.putParam("AITgts", source.getSVar("AttachAITgts"));
-        }
-        if (source.hasSVar("AttachAILogic")) {
-            aura.putParam("AILogic", source.getSVar("AttachAILogic"));
-        }
-        if (source.hasSVar("AttachAIValid")) {
-            aura.putParam("AIValid", source.getSVar("AttachAIValid"));
+        SpellAbility aura = source.getCurrentState().getAuraSpell();
+        if (aura == null) {
+            return false;
         }
 
         Set<ZoneType> zones = EnumSet.noneOf(ZoneType.class);
